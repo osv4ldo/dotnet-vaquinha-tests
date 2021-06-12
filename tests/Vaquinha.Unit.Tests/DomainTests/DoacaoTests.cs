@@ -38,6 +38,22 @@ namespace Vaquinha.Unit.Tests.DomainTests
         }
 
         [Fact]
+        [Trait("Doacao", "Doacao_UsuarioAceitaPagarComTaxa_DoacaoValida")]
+        public void Doacao_UsuarioAceitaPagarComTaxa_DoacaoValida()
+        {           
+            // Arrange
+            var doacao = _doacaoFixture.DoacaoValida(false, 5, false, true);
+            doacao.AdicionarEnderecoCobranca(_enderecoFixture.EnderecoValido());
+            doacao.AdicionarFormaPagamento(_cartaoCreditoFixture.CartaoCreditoValido());
+
+            // Act
+            var valido = doacao.Valido();
+
+            // Assert
+            doacao.Valor.Should().Be(6, because: "valor com taxa de 20%");
+        }
+
+        [Fact]
         [Trait("Doacao", "Doacao_DadosPessoaisInvalidos_DoacaoInvalida")]
         public void Doacao_DadosPessoaisInvalidos_DoacaoInvalida()
         {
@@ -119,7 +135,7 @@ namespace Vaquinha.Unit.Tests.DomainTests
 
             // Assert
             valido.Should().BeFalse(because: "O campo Mensagem de Apoio possui mais caracteres do que o permitido");
-            doacao.ErrorMessages.Should().HaveCount(1, because: "somente o campo Mensagem deApoio está inválido.");
+            doacao.ErrorMessages.Should().HaveCount(1, because: "somente o campo Mensagem de Apoio está inválido.");
             doacao.ErrorMessages.Should().Contain("O campo Mensagem de Apoio deve possuir no máximo 500 caracteres.");
         }
 
